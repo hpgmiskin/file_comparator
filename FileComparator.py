@@ -16,9 +16,30 @@ class SanitiseString():
 	def __init__(self,stringInput):
 		self.string = stringInput
 
-	def removeCharacters(characters):
+	def printString(self):
+		print(self.string)
+
+	def removeCharacters(self,characters):
 		"method to strip class string of certain characters"
+
+		oldString = self.string
+
+		#pattern = re.escape(character)
+
+		for character in characters:
+			pattern = re.escape(character)
+			newString = re.sub(pattern, "", oldString)
+			oldString = newString
+			#print(newString)
+
+		self.string = newString
+
+
 		
 
 if __name__ == "__main__":
-	print("running")
+
+	sanitiseString = SanitiseString("""Test ()""??,,*""")
+	sanitiseString.printString()
+	sanitiseString.removeCharacters(["?",",","*","\"","(",")"])
+	sanitiseString.printString()
