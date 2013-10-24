@@ -9,6 +9,7 @@ class FolderDuplicates():
 	def __init__(self,folderPaths):
 		self.folderPaths = {}
 		self.folderContents = {}
+
 		self.setFolderPaths(folderPaths)
 
 	def printInfo(self):
@@ -32,6 +33,20 @@ class FolderDuplicates():
 		self.folderPaths = currentFolderPaths
 		self.folderContents = folderContents
 
+	def sanitiseFolderContent(self,folderName,mode="film"):
+		"sanitises the folder contents of the folder with the given name"
+
+		sanitiseString = SanitiseString(mode)
+		folderContents = self.folderContents
+
+		sanitisedFolderContent = []
+		for item in folderContents[folderName]:
+			sanitisedFolderContent.append(sanitiseString.sanitise(item))
+
+		folderContents[folderName] = sanitisedFolderContent
+		self.folderContents = folderContents
+
+
 	def getFolderContent(self,folderName):
 		"returns the contents of the given folder"
 
@@ -42,12 +57,26 @@ class FolderDuplicates():
 class SanitiseString():
 	"""SanitiseString provides the logic to remove unwanted content from string input"""
 
-	def __init__(self,stringInput):
-		self.string = stringInput
+	def __init__(self,mode):
+		self.mode = mode
+		self.string = ""
 
 	def printString(self):
 		print(self.string)
 
+	def sanitise(self,string):
+		"method to return a sanitised string based on the class mode"
+
+		self.string = string
+		mode = self.mode
+
+		if mode == "film":
+			self.replaceCharacters(["'"],"")
+			self.replaceCharacters([".","  "]," ")
+			self.removeBetween("[","]")
+			self.removeBetween("(",")")
+
+		return self.string
 
 	def removeBetween(self,openCharacter,closeCharacter):
 		"method to remove the string between the given characters and the characters themselves"
@@ -56,7 +85,6 @@ class SanitiseString():
 		pattern = re.compile("(\{}.*\{})".format(openCharacter,closeCharacter))
 		matches = re.findall(pattern,oldString)
 		self.replaceCharacters(matches)
-
 		return matches
 
 	def replaceCharacters(self,characters,substitute=""):
@@ -86,7 +114,7 @@ def directoryName(path=None):
 
 	if not path:
 		path = os.getcwd()
-	return os.path.dirname(path)
+	return os.path.split(path)[1]
 
 def directorySize(path):
 	"returns the size of the given path"
@@ -96,9 +124,12 @@ def directorySize(path):
 	return os.path.getsize(path)
 
 if __name__ == "__main__":
-	folderA = r"C:\Users\miskinh\SkyDrive\Documents\Documents\Python\Film List\testa"
-	folderB = r"C:\Users\miskinh\SkyDrive\Documents\Documents\Python\Film List\testb"
+	folderA = r"E:\My Videos\My Films"
+	folderB = r"E:\My Videos\NEW"
 	folderDuplicates = FolderDuplicates([folderA,folderB])
+	folderDuplicates.printInfo()
+	folderDuplicates.sanitiseFolderContent("NEW")
+	folderDuplicates.sanitiseFolderContent("My Videos")
 	folderDuplicates.printInfo()
 
 if __name__ != "__main__":
