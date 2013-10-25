@@ -9,6 +9,7 @@ class FolderDuplicates():
 	def __init__(self,folderPaths):
 		self.folderPaths = {}
 		self.folderContents = {}
+		self.duplicates = {}
 
 		self.setFolderPaths(folderPaths)
 
@@ -46,6 +47,17 @@ class FolderDuplicates():
 		folderContents[folderName] = sanitisedFolderContent
 		self.folderContents = folderContents
 
+	def findDuplicates(self,folderNameA,folderNameB):
+		"method to find the films that are in both folders"
+
+		folderContents = self.folderContents
+		folderContentsA = folderContents[folderNameA]
+		folderContentsB = folderContents[folderNameB]
+
+		duplicates = [fileName for fileName in folderContentsA if fileName in folderContentsB]
+		self.duplicates[folderNameA+" "+folderNameB] = duplicates
+
+		return duplicates
 
 	def getFolderContent(self,folderName):
 		"returns the contents of the given folder"
@@ -72,11 +84,22 @@ class SanitiseString():
 
 		if mode == "film":
 			self.replaceCharacters(["'"],"")
-			self.replaceCharacters([".","  "]," ")
+			self.replaceCharacters([".","-","   ","  "]," ")
 			self.removeBetween("[","]")
 			self.removeBetween("(",")")
+			self.stripTrailing()
 
 		return self.string
+
+	def stripTrailing(self):
+		"method to strip the trailling whitespace from the class string"
+
+		oldString = self.string
+		pattern = r'\s$'
+		newString = re.sub(pattern,"",oldString)
+		self.string = newString
+		return newString
+
 
 	def removeBetween(self,openCharacter,closeCharacter):
 		"method to remove the string between the given characters and the characters themselves"
@@ -129,8 +152,9 @@ if __name__ == "__main__":
 	folderDuplicates = FolderDuplicates([folderA,folderB])
 	folderDuplicates.printInfo()
 	folderDuplicates.sanitiseFolderContent("NEW")
-	folderDuplicates.sanitiseFolderContent("My Videos")
+	folderDuplicates.sanitiseFolderContent("My Films")
 	folderDuplicates.printInfo()
+	folderDuplicates.findDuplicates("NEW","My Films")
 
 if __name__ != "__main__":
 	sanitiseString = SanitiseString("""Test 'comma' [square] (bracket)""??,,*""")
