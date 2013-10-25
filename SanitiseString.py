@@ -17,7 +17,8 @@ class SanitiseString():
 		mode = self.mode
 
 		if mode == "film":
-			self.replaceCharacters(["'"],"")
+			self.lowerCase()
+			self.replaceCharacters(["'","and","or","of","the","&"],"")
 			self.replaceCharacters([".","-","   ","  "]," ")
 			self.removeBetween("[","]")
 			self.removeBetween("(",")")
@@ -34,6 +35,11 @@ class SanitiseString():
 		self.string = newString
 		return newString
 
+	def lowerCase(self):
+		"method to uncapitalise the given string"
+
+		string = self.string
+		self.string = string.lower()
 
 	def removeBetween(self,openCharacter,closeCharacter):
 		"method to remove the string between the given characters and the characters themselves"

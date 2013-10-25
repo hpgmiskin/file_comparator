@@ -74,6 +74,7 @@ class FolderDuplicates():
 
 		duplicates = [fileName for fileName in folderContentsA if fileName in folderContentsB]
 		self.duplicates[folderNameA+" "+folderNameB] = duplicates
+		saveFile("{} - {} - Duplicates.txt".format(folderNameA,folderNameB),duplicates)
 
 		return duplicates
 
@@ -84,12 +85,11 @@ class FolderDuplicates():
 		return folderContents[folderName]
 
 
-if __name__ == "__main__":
+if True:
 	folderDuplicates = FolderDuplicates()
 	folderDuplicates.loadData()
 	folderDuplicates.printInfo()
-
-if __name__ != "__main__":
+else:
 	folderA = r"E:\My Videos\My Films"
 	folderB = r"E:\My Videos\NEW"
 	folderDuplicates = FolderDuplicates()
