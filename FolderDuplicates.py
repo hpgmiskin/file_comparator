@@ -1,5 +1,5 @@
-#FileComparator.py
-import re,os,json
+from SanitiseString import SanitiseString
+from SharedFunctions import saveFile,loadFile,directoryContent,directoryName,directorySize
 
 BACKUP_NAME = "FolderDuplicatesBackup.txt"
 
@@ -84,110 +84,6 @@ class FolderDuplicates():
 		return folderContents[folderName]
 
 
-class SanitiseString():
-	"""SanitiseString provides the logic to remove unwanted content from string input"""
-
-	def __init__(self,mode):
-		self.mode = mode
-		self.string = ""
-
-	def printString(self):
-		print(self.string)
-
-	def sanitise(self,string):
-		"method to return a sanitised string based on the class mode"
-
-		self.string = string
-		mode = self.mode
-
-		if mode == "film":
-			self.replaceCharacters(["'"],"")
-			self.replaceCharacters([".","-","   ","  "]," ")
-			self.removeBetween("[","]")
-			self.removeBetween("(",")")
-			self.stripTrailing()
-
-		return self.string
-
-	def stripTrailing(self):
-		"method to strip the trailling whitespace from the class string"
-
-		oldString = self.string
-		pattern = r'\s$'
-		newString = re.sub(pattern,"",oldString)
-		self.string = newString
-		return newString
-
-
-	def removeBetween(self,openCharacter,closeCharacter):
-		"method to remove the string between the given characters and the characters themselves"
-
-		oldString = self.string
-		pattern = re.compile("(\{}.*\{})".format(openCharacter,closeCharacter))
-		matches = re.findall(pattern,oldString)
-		self.replaceCharacters(matches)
-		return matches
-
-	def replaceCharacters(self,characters,substitute=""):
-		"method to replace given characters in the class string with the given substitute"
-
-		if (len(characters) < 1):
-			return None
-
-		oldString = self.string
-		for character in characters:
-			pattern = re.escape(character)
-			newString = re.sub(pattern, substitute, oldString)
-			oldString = newString
-
-		self.string = newString
-		return newString
-
-def saveFile(fileName,data):
-	"saves a file of a given name with the given variable"
-
-	if (type(data) == str):
-		saveData = data
-	else:
-		saveData = json.dumps(data)
-
-	with open(fileName,"w") as openFile:
-		openFile.write(saveData)
-
-def loadFile(fileName,dataType="string"):
-	"loads the file of the given name and returns the data"
-
-	with open(fileName,"r") as openFile:
-		loadData = openFile.read()
-
-	if (dataType == "string"):
-		data = loadData
-	else:
-		data = json.loads(loadData)
-
-	return data
-
-def directoryContent(path=None):
-	"returns a list of all the files in the given path"
-
-	if not path:
-		path = os.getcwd()
-	return os.listdir(path)
-
-def directoryName(path=None):
-	"returns the name of folder given by the path"
-
-	if not path:
-		path = os.getcwd()
-	return os.path.split(path)[1]
-
-def directorySize(path):
-	"returns the size of the given path"
-
-	if not path:
-		path = os.getcwd()
-	return os.path.getsize(path)
-
 if __name__ == "__main__":
 	folderDuplicates = FolderDuplicates()
 	folderDuplicates.loadData()
@@ -204,15 +100,3 @@ if __name__ != "__main__":
 	folderDuplicates.printInfo()
 	folderDuplicates.findDuplicates("NEW","My Films")
 	folderDuplicates.saveData()
-
-if __name__ != "__main__":
-	sanitiseString = SanitiseString("""Test 'comma' [square] (bracket)""??,,*""")
-	sanitiseString.printString()
-	sanitiseString.replaceCharacters(["?",",","*","\""])
-	sanitiseString.printString()
-	sanitiseString.removeBetween("(",")")
-	sanitiseString.printString()
-	sanitiseString.removeBetween("[","]")
-	sanitiseString.printString()
-	sanitiseString.removeBetween("'","'")
-	sanitiseString.printString()

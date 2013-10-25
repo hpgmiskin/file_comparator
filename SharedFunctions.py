@@ -1,0 +1,46 @@
+import os,json
+
+def saveFile(fileName,data):
+	"saves a file of a given name with the given variable"
+
+	if (type(data) == str):
+		saveData = data
+	else:
+		saveData = json.dumps(data)
+
+	with open(fileName,"w") as openFile:
+		openFile.write(saveData)
+
+def loadFile(fileName,dataType="string"):
+	"loads the file of the given name and returns the data"
+
+	with open(fileName,"r") as openFile:
+		loadData = openFile.read()
+
+	if (dataType == "string"):
+		data = loadData
+	else:
+		data = json.loads(loadData)
+
+	return data
+
+def directoryContent(path=None):
+	"returns a list of all the files in the given path"
+
+	if not path:
+		path = os.getcwd()
+	return os.listdir(path)
+
+def directoryName(path=None):
+	"returns the name of folder given by the path"
+
+	if not path:
+		path = os.getcwd()
+	return os.path.split(path)[1]
+
+def directorySize(path):
+	"returns the size of the given path"
+
+	if not path:
+		path = os.getcwd()
+	return os.path.getsize(path)
