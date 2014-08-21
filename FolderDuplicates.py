@@ -1,5 +1,5 @@
 from SanitiseString import SanitiseString
-from SharedFunctions import saveFile,loadFile,directoryContent,directoryName,directorySize
+from SharedFunctions import *#saveFile,loadFile,directoryContent,directoryName,directorySize
 
 BACKUP_NAME = "FolderDuplicatesBackup.txt"
 
@@ -74,9 +74,45 @@ class FolderDuplicates():
 
 		duplicates = [fileName for fileName in folderContentsA if fileName in folderContentsB]
 		self.duplicates[folderNameA+" "+folderNameB] = duplicates
+		print(duplicates)
 		saveFile("{} - {} - Duplicates.txt".format(folderNameA,folderNameB),duplicates)
 
 		return duplicates
+
+	def compareContents(self,folderNameA,folderNameB):
+		"method to compare the contents of two folders and write a csv file with the comparison"
+
+		folderContents = self.folderContents
+		folderContentsA = folderContents[folderNameA]
+		folderContentsB = folderContents[folderNameB]
+
+		folderContentsA = sorted(folderContentsA)
+		folderContentsB = sorted(folderContentsB)
+
+		output = []
+		output.append([folderNameA,folderNameB])
+
+		#while the folders still have contents to compare
+		while (sum([len(folderContentsA),len(folderContentsB)]) > 0):
+
+			#if there is nothing in folder A write folder B
+			if (len(folderContentsA) == 0):
+				output.append(["",folderContentsB.pop(0)])
+			#if there is nothin in folder B write folder A
+			elif (len(folderContentsA) == 0):
+				output.append([folderContentsA.pop(0),""])
+			#if the folder contents is the same write both
+			elif (folderContentsA[0] == folderContentsB[0]):
+				output.append([folderContentsA.pop(0),folderContentsB.pop(0)])
+			#otherwise take the folder contents wich is higher in the alphabet
+			elif (sorted([folderContentsA[0],folderContentsB[0]])[0] == folderContentsA[0]):
+				output.append([folderContentsA.pop(0),""])
+			else:
+				output.append(["",folderContentsB.pop(0)])
+
+		#save the file to csv
+		saveCsvFile("{} - {} - Comparison.csv".format(folderNameA,folderNameB),output)
+
 
 	def getFolderContent(self,folderName):
 		"returns the contents of the given folder"
@@ -85,18 +121,18 @@ class FolderDuplicates():
 		return folderContents[folderName]
 
 
-if True:
+if False:
 	folderDuplicates = FolderDuplicates()
 	folderDuplicates.loadData()
 	folderDuplicates.printInfo()
 else:
-	folderA = r"E:\My Videos\My Films"
-	folderB = r"E:\My Videos\NEW"
+	folderA = r"E:\My Videos\My External Films"
+	folderB = r"D:\Videos\My Films"
+
 	folderDuplicates = FolderDuplicates()
 	folderDuplicates.setFolderPaths([folderA,folderB])
-	folderDuplicates.printInfo()
-	folderDuplicates.sanitiseFolderContent("NEW")
+
+	folderDuplicates.sanitiseFolderContent("My External Films")
 	folderDuplicates.sanitiseFolderContent("My Films")
-	folderDuplicates.printInfo()
-	folderDuplicates.findDuplicates("NEW","My Films")
-	folderDuplicates.saveData()
+	folderDuplicates.compareContents("My External Films","My Films")
+

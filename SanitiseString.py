@@ -18,7 +18,8 @@ class SanitiseString():
 
 		if mode == "film":
 			self.lowerCase()
-			self.replaceCharacters(["'","and","or","of","the","&"],"")
+			self.replaceCharacters(["'","?","!"],"")
+			self.replaceCharacters([" and "," or "," of "," the "," & "]," ")
 			self.replaceCharacters([".","-","   ","  "]," ")
 			self.removeBetween("[","]")
 			self.removeBetween("(",")")
@@ -30,7 +31,7 @@ class SanitiseString():
 		"method to strip the trailling whitespace from the class string"
 
 		oldString = self.string
-		pattern = r'\s$'
+		pattern = r'\s*$'
 		newString = re.sub(pattern,"",oldString)
 		self.string = newString
 		return newString

@@ -1,4 +1,13 @@
-import os,json
+import os,csv,json
+
+def saveCsvFile(fileName,data):
+	"saves the given list of lists as a CSV file"
+
+	with open(fileName, 'w', newline='') as csvfile:
+		csvWriter = csv.writer(csvfile, dialect="excel")
+
+		for row in data:
+			csvWriter.writerow(row)
 
 def saveFile(fileName,data):
 	"saves a file of a given name with the given variable"
