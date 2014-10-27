@@ -1,5 +1,5 @@
 from SanitiseString import SanitiseString
-from SharedFunctions import *#saveFile,loadFile,directoryContent,directoryName,directorySize
+from SharedFunctions import *
 
 BACKUP_NAME = "FolderDuplicatesBackup.txt"
 
@@ -74,10 +74,9 @@ class FolderDuplicates():
 
 		duplicates = [fileName for fileName in folderContentsA if fileName in folderContentsB]
 		self.duplicates[folderNameA+" "+folderNameB] = duplicates
-		print(duplicates)
-		saveFile("{} - {} - Duplicates.txt".format(folderNameA,folderNameB),duplicates)
+		
+		saveCSVFile("{} - {} - Duplicates.txt".format(folderNameA,folderNameB),duplicates)
 
-		return duplicates
 
 	def compareContents(self,folderNameA,folderNameB):
 		"method to compare the contents of two folders and write a csv file with the comparison"
@@ -121,18 +120,20 @@ class FolderDuplicates():
 		return folderContents[folderName]
 
 
-if False:
-	folderDuplicates = FolderDuplicates()
-	folderDuplicates.loadData()
-	folderDuplicates.printInfo()
-else:
-	folderA = r"E:\My Videos\My External Films"
-	folderB = r"D:\Videos\My Films"
+if __name__ == "__main__":
+	
+	#define folders to compare
+	folderA = r"test_folder/folder_a"
+	folderB = r"test_folder/folder_b"
 
+	#initiate class and set folder paths
 	folderDuplicates = FolderDuplicates()
 	folderDuplicates.setFolderPaths([folderA,folderB])
 
-	folderDuplicates.sanitiseFolderContent("My External Films")
-	folderDuplicates.sanitiseFolderContent("My Films")
-	folderDuplicates.compareContents("My External Films","My Films")
+	#sanatise the file names in the folder using SanatiseString class
+	folderDuplicates.sanitiseFolderContent("folder_a","film")
+	folderDuplicates.sanitiseFolderContent("folder_b","film")
+
+	#compare contents and output to csv file
+	folderDuplicates.compareContents("folder_a","folder_b")
 
